@@ -1,19 +1,29 @@
+//use hyper::body::HttpBody as _;
 use hyper::Client;
+use hyper_tls::HttpsConnector;
+use tokio::io::{stdout, AsyncWriteExt as _};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-    // This is where we will setup our HTTP client requests.
+    let _git_token: String = String::from("eTzvSgg8sFPRkzDhcXoo");
 
-    // Still inside `async fn main`...
-    let client = Client::new();
-
-    // Parse an `http::Uri`...
-    let uri = "http://httpbin.org/ip".parse()?;
-
-    // Await the response...
+    let https = HttpsConnector::new();
+    let client = Client::builder().build::<_, hyper::Body>(https);
+    let uri = "https://3.121.74.13/api/v4/users".parse()?;
     let resp = client.get(uri).await?;
-
     println!("Response: {}", resp.status());
 
     Ok(())
 }
+
+//use std::collections::HashMap;
+//
+//#[tokio::main]
+//async fn main() -> Result<(), Box<dyn std::error::Error>> {
+//    let resp = reqwest::get("https://httpbin.org/ip")
+//        .await?
+//        .json::<HashMap<String, String>>()
+//        .await?;
+//    println!("{:#?}", resp);
+//    Ok(())
+//}
