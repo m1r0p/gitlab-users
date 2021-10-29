@@ -7,6 +7,8 @@ from config import (
         GITLAB_USERS_URL,
         AMOUNT_OF_PAGES,
         GITLAB_TOKEN,
+        DEVX_DOMAINS,
+        GITLAB_VERSION_URL,
 
 )
 
@@ -30,20 +32,38 @@ def get_users_from_gitlab():
     with requests.Session() as s:
         #s.auth = OAuth1(GITLAB_TOKEN) 
         for url in urls:
-            resp = json.loads(requests.get(url, verify=False, headers={'PRIVATE-TOKEN': GITLAB_TOKEN}).content.decode())
+            resp = json.loads(requests.get(url, verify=True, headers={'PRIVATE-TOKEN': GITLAB_TOKEN}).content.decode())
             for user in resp:
                 uid = user.get('id')
                 username = user.get('username')
+                state = user.get('state')
                 email = user.get('email')
-                globals()['%s' % uid] = User(int(uid), username, email)
+                globals()['%s' % uid] = User(int(uid), username, state, email)
                 users.append(globals()['%s' % uid])
 
     return users
 
-def get_valid_users(user_list):
-    pass
+def check_users():
+    user_list = get_users_from_gitlab()
+    valid_users = list()
+    invalid_users = list()
+    for user in user_list:
+        domain = user.email.split('@')[1]
+        if domain in DEVX_DOMAINS:
+            valid_users.append(user)
+        else:
+            invalid_users.append(user)
 
-def get_invalid_users(user_list):
-    pass
+    users = dict()
+    users['valid_users'] = valid_users
+    users['invalid_users'] = invalid_users
+   
+    return users
 
+def get_version():
+    with requests.Session() as s:
+        #s.auth = OAuth1(GITLAB_TOKEN) 
+        resp = json.loads(requests.get(GITLAB_VERSION_URL, verify=True, headers={'PRIVATE-TOKEN': GITLAB_TOKEN}).content.decode())
+        
+    return resp.get('version')
 

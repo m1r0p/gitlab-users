@@ -1,19 +1,23 @@
 #!/usr/bin/env python3
  
 ###### import
-##### constants
 
-##### functions
+##### local files
 from functions import *
+
+##### libraries
+import sys
 
 ###### start 
 def main():
-    users = get_users_from_gitlab()
-    i = 0
-    for user in users:
-        i = i + 1
+    #invalid_users = check_users().get('invalid_users')
+    #for user in invalid_users:
+    #    print("user = %s, email = %s state = %s" % (user.username, user.email, user.state))
+    #    #print(user.email.split('@')[1])
+    ver = get_version()
+    print(ver)
+    
 
-    print(i)
 
 if __name__ == "__main__":
     main()
