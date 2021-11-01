@@ -4,6 +4,7 @@
 
 ##### local files
 from config import (
+        GITLAB_BASE_URL,
         GITLAB_USERS_URL,
         AMOUNT_OF_PAGES,
         GITLAB_TOKEN,
@@ -17,6 +18,7 @@ from classes import *
 ##### libraries
 import requests
 import json
+import paramiko
 
 ###### functions
 def gen_urls():
@@ -60,10 +62,25 @@ def check_users():
    
     return users
 
-def get_version():
+def check_version():
+    versions = list()
     with requests.Session() as s:
         #s.auth = OAuth1(GITLAB_TOKEN) 
         resp = json.loads(requests.get(GITLAB_VERSION_URL, verify=True, headers={'PRIVATE-TOKEN': GITLAB_TOKEN}).content.decode())
-        
-    return resp.get('version')
+        current_version = resp.get('version')
+
+    k = paramiko.RSAKey.from_private_key_file("./gitlab.key")
+    c = paramiko.SSHClient()
+    c.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    c.connect( hostname = GITLAB_BASE_URL, username = "user", pkey = k )
+    c.exec_command("apt update")
+    stdin, stdout, stderr = c.exec_command("apt list -a gitlab-ce | awk '{print $2}'")
+    last_version = stdout.read().decode().split('\n')[1].split('-')[0]
+    c.close()
+
+    versions.append(current_version)
+    versions.append(last_version)
+       
+    return versions
+
 
