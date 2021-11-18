@@ -76,7 +76,7 @@ def check_git_version():
         current_version = resp.get('version')
     
     ##### finding last version
-    k = paramiko.RSAKey.from_private_key_file("/usr/lib/nagios/plugins/devx_multicheck/gitlab.key")
+    k = paramiko.RSAKey.from_private_key_file("../gitlab.key")
     c = paramiko.SSHClient()
     c.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     c.connect( hostname = GITLAB_BASE_URL, username = "user", pkey = k )
