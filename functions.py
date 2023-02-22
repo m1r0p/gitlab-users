@@ -94,7 +94,7 @@ def check_squash_version():
     versions = list()
     
     ##### finding current version
-    raw_resp = requests.get('http://192.168.11.237:8030/squash/administration').content.decode()
+    raw_resp = requests.get(OLD_SQUASH_ADMIN_URL).content.decode()
     parsed_resp = bs(raw_resp, "lxml")
    
 
