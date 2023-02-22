@@ -8,7 +8,7 @@ from config import (
         GITLAB_USERS_URL,
         AMOUNT_OF_PAGES,
         GITLAB_TOKEN,
-        DEVX_DOMAINS,
+        VALID_DOMAINS,
         GITLAB_VERSION_URL,
         OLD_SQUASH_ADMIN_URL,
         OLD_SQUASH_USER,
@@ -56,9 +56,9 @@ def check_git_users():
     invalid_users = list()
     for user in user_list:
         domain = user.email.split('@')[1]
-        if domain in DEVX_DOMAINS and user.state == 'active':
+        if domain in VALID_DOMAINS and user.state == 'active':
             valid_users.append(user)
-        elif domain not in DEVX_DOMAINS and user.state == 'active':
+        elif domain not in VALID_DOMAINS and user.state == 'active':
             invalid_users.append(user)
 
     users = dict()
